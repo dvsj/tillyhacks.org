@@ -19,8 +19,7 @@ import { useToast } from "@/components/ui/use-toast"
 import { useSupabase } from "@/components/supabase-provider"
 import Header from "@/components/header"
 
-// Admin password from environment variable with fallback
-const ADMIN_PASSWORD = process.env.NEXT_PUBLIC_ADMIN_PASSWORD
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD
 
 type Submission = {
   id: number
