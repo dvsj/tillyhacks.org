@@ -7,7 +7,7 @@ import { SupabaseProvider } from "@/components/supabase-provider"
 
 export const metadata: Metadata = {
   title: "TillyHacks",
-  description: "Northern Virginia's premier hackathon for students",
+  description: "Chantilly's premier hackathon for students",
   icons: {
     icon: "/favicon.ico",
   },

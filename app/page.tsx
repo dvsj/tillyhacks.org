@@ -47,7 +47,7 @@ export default function Home() {
           <h1 className="text-4xl md:text-6xl font-bold mb-4 animate-typing overflow-hidden whitespace-nowrap border-r-4 border-primary w-[300px] md:w-[600px]">
             {userName ? `Welcome to TillyHacks, ${userName}!` : "Welcome to TillyHacks!"}
           </h1>
-          <p className="text-xl mb-8">Northern Virginia • MM-DD-YY - MM-DD-YY</p>
+          <p className="text-xl mb-8">Northern Virginia • 09-xx-25 - 09-xx-25</p>
           <div className="flex flex-col sm:flex-row gap-4">
             <Link href="/forms">
               <Button size="lg" className="bg-primary hover:bg-primary/90">

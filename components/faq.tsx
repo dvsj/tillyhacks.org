@@ -18,7 +18,7 @@ const faqItems = [
   {
     question: "Where is it held?",
     answer:
-      "The event takes place at Chantilly High School, a secure location with limited access. Only registered attendees, approved staff, and authorized adults may enter the event area.",
+      "The event takes place at <venue here>, a secure location with limited access. Only registered attendees, approved staff, and authorized adults may enter the event area.",
   },
   {
     question: "Are there teams?",
@@ -62,7 +62,7 @@ const faqItems = [
   {
     question: "How can I contact the organizers?",
     answer:
-      "You can reach us anytime at hello@tillyhacks.org or message us on Discord. For urgent questions during the event, call or text us at 671-337-6969.",
+      "You can reach us anytime at hello@tillyhacks.org or message us on Discord. For urgent questions during the event, call or text us at xxx-xxx-xxxx.",
   },
 ]
 
