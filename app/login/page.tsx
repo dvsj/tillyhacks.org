@@ -1,39 +1,30 @@
 "use client"
 
 import type React from "react"
-
 import { useState } from "react"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Label } from "@/components/ui/label"
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
+import { useSupabase } from "@/components/supabase-provider"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { FaGithub } from "react-icons/fa"
-import { useToast } from "@/components/ui/use-toast"
-import { useSupabase } from "@/components/supabase-provider"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 
-export default function Login() {
+export default function LoginPage() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const router = useRouter()
-  const { toast } = useToast()
+  const [isGitHubLoading, setIsGitHubLoading] = useState(false)
+  const [forgotPasswordOpen, setForgotPasswordOpen] = useState(false)
+  const [loginErrorOpen, setLoginErrorOpen] = useState(false)
+  const [errorMessage, setErrorMessage] = useState("")
   const { supabase } = useSupabase()
+  const router = useRouter()
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleEmailLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
-    setError(null)
 
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
@@ -42,93 +33,65 @@ export default function Login() {
       })
 
       if (error) {
-        setError(error.message || "Incorrect email or password. Please try again.")
-        throw error
+        setErrorMessage("Incorrect password or email. Please try again.")
+        setLoginErrorOpen(true)
+      } else if (data.user) {
+        router.push("/")
+        router.refresh()
       }
-
-      if (data.user) {
-        // Show success toast
-        toast({
-          title: "Login successful",
-          description: "You are now logged in and being redirected.",
-        })
-
-        // Force a hard navigation to the home page
-        window.location.href = "/"
-      }
-    } catch (error: any) {
-      console.error("Login error:", error)
-      setError(error.message || "Incorrect email or password. Please try again.")
+    } catch (error) {
+      setErrorMessage("Incorrect password or email. Please try again.")
+      setLoginErrorOpen(true)
     } finally {
       setIsLoading(false)
     }
   }
 
-  // Update the handleGithubLogin function
-  const handleGithubLogin = async () => {
-    setIsLoading(true)
-    setError(null)
+  const handleGitHubSignIn = async () => {
+    setIsGitHubLoading(true)
     try {
-      // Get the current site URL dynamically
-      const currentOrigin =
-        typeof window !== "undefined" ? window.location.origin : "https://tillyhacks.org"
-
-      console.log("Using redirect URL:", `${currentOrigin}/api/auth/callback`)
-
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "github",
         options: {
-          redirectTo: `${currentOrigin}/api/auth/callback`,
+          redirectTo: `${window.location.origin}/auth/callback`,
         },
       })
 
       if (error) {
-        setError(error.message || "An error occurred during GitHub login.")
-        throw error
+        setErrorMessage("GitHub login failed. Please try again.")
+        setLoginErrorOpen(true)
       }
-    } catch (error: any) {
-      console.error("GitHub login error:", error)
-      setError(error.message || "An error occurred during GitHub login.")
-      setIsLoading(false)
+    } catch (error) {
+      setErrorMessage("GitHub login failed. Please try again.")
+      setLoginErrorOpen(true)
+    } finally {
+      setIsGitHubLoading(false)
     }
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background p-4">
-      <Card className="w-full max-w-md">
+    <div className="flex items-center justify-center h-screen bg-background">
+      <Card className="w-[450px] shadow-md">
         <CardHeader className="text-center">
           <Link href="/" className="inline-block mb-4">
-            <h1 className="text-4xl font-bold">
-              <span className="text-primary">Tilly</span>Hacks
-            </h1>
+            <div className="flex items-center justify-center space-x-2">
+              <img src="/logo.png" alt="TillyHacks Logo" className="h-12 w-12" />
+              <h1 className="text-4xl font-bold">
+                <span className="text-primary">Tilly</span>Hacks
+              </h1>
+            </div>
           </Link>
-          <CardTitle className="text-2xl">Login</CardTitle>
-          <CardDescription>Enter your credentials to access your account</CardDescription>
+          <CardTitle className="text-2xl">login</CardTitle>
+          <CardDescription>sign in to register for the hackathon</CardDescription>
         </CardHeader>
-        <CardContent>
-          <Button variant="outline" className="w-full mb-6" onClick={handleGithubLogin} disabled={isLoading}>
-            <FaGithub className="mr-2" />
-            Login with GitHub
-          </Button>
-
-          <div className="relative mb-6">
-            <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t" />
-            </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
-            </div>
-          </div>
-
-          {error && <div className="bg-destructive/10 text-destructive text-sm p-3 rounded-md mb-4">{error}</div>}
-
-          <form onSubmit={handleLogin} className="space-y-4">
+        <CardContent className="space-y-4">
+          <form onSubmit={handleEmailLogin} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input
                 id="email"
+                placeholder="Enter your email"
                 type="email"
-                placeholder="Email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -139,47 +102,78 @@ export default function Login() {
               <Label htmlFor="password">Password</Label>
               <Input
                 id="password"
+                placeholder="Enter your password"
                 type="password"
-                placeholder="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 disabled={isLoading}
               />
             </div>
-            <Button type="submit" className="w-full bg-primary hover:bg-primary/90" disabled={isLoading}>
-              {isLoading ? "Logging in..." : "Login"}
+            <Button type="submit" className="w-full" disabled={isLoading}>
+              {isLoading ? "signing in..." : "log in"}
             </Button>
           </form>
-        </CardContent>
-        <CardFooter className="flex flex-col space-y-2">
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button variant="link" className="px-0" disabled={isLoading}>
-                Forgot your password?
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Password Reset</DialogTitle>
-                <DialogDescription>
-                  Please contact{" "}
-                  <a href="mailto:hello@tillyhacks.org" className="text-purple-500 hover:underline">
-                    hello@tillyhacks.org
-                  </a>{" "}
-                  to reset your password.
-                </DialogDescription>
-              </DialogHeader>
-            </DialogContent>
-          </Dialog>
-          <div className="text-center text-sm">
-            Don&apos;t have an account?{" "}
-            <Link href="/register" className="text-primary hover:underline">
-              Register
+
+          <div className="text-center">
+            <button
+              type="button"
+              onClick={() => setForgotPasswordOpen(true)}
+              className="text-sm text-muted-foreground hover:text-foreground cursor-pointer"
+            >
+              forgot password?
+            </button>
+          </div>
+
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-background px-2 text-muted-foreground">or</span>
+            </div>
+          </div>
+
+          <Button onClick={handleGitHubSignIn} disabled={isGitHubLoading} variant="outline" className="w-full">
+            <i className="fab fa-github mr-2"></i>
+            {isGitHubLoading ? "signing in..." : "sign in with github"}
+          </Button>
+
+          <div className="text-center">
+            <Link href="/register" className="text-sm text-muted-foreground hover:text-foreground">
+              don't have an account? register
             </Link>
           </div>
-        </CardFooter>
+        </CardContent>
       </Card>
+
+      {/* Login Error Dialog */}
+      <Dialog open={loginErrorOpen} onOpenChange={setLoginErrorOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Login Failed</DialogTitle>
+            <DialogDescription>{errorMessage}</DialogDescription>
+          </DialogHeader>
+          <div className="flex justify-end">
+            <Button onClick={() => setLoginErrorOpen(false)}>Close</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Forgot Password Dialog */}
+      <Dialog open={forgotPasswordOpen} onOpenChange={setForgotPasswordOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Password Reset</DialogTitle>
+            <DialogDescription>
+              Please contact us at hello [at] tillyhacks [dot] org for password reset assistance.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex justify-end">
+            <Button onClick={() => setForgotPasswordOpen(false)}>Close</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

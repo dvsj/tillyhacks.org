@@ -2,6 +2,17 @@
 @tailwind components;
 @tailwind utilities;
 
+
+body {
+  font-family: "Cascadia Code", monospace;
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -25,27 +36,39 @@
     --ring: 271 100% 50%;
     --radius: 0.5rem;
   }
-
   .dark {
-    --background: 240 10% 3.9%;
+    --background: 0 0% 3.9%;
     --foreground: 0 0% 98%;
-    --card: 240 10% 3.9%;
+    --card: 0 0% 3.9%;
     --card-foreground: 0 0% 98%;
-    --popover: 240 10% 3.9%;
+    --popover: 0 0% 3.9%;
     --popover-foreground: 0 0% 98%;
     --primary: 271 100% 50%;
     --primary-foreground: 0 0% 98%;
-    --secondary: 240 3.7% 15.9%;
+    --secondary: 0 0% 14.9%;
     --secondary-foreground: 0 0% 98%;
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
-    --accent: 240 3.7% 15.9%;
+    --muted: 0 0% 14.9%;
+    --muted-foreground: 0 0% 63.9%;
+    --accent: 0 0% 14.9%;
     --accent-foreground: 0 0% 98%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
+    --border: 0 0% 14.9%;
+    --input: 0 0% 14.9%;
     --ring: 271 100% 50%;
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
   }
 }
 
@@ -55,60 +78,20 @@
   }
   body {
     @apply bg-background text-foreground;
-    font-family: Arial, sans-serif;
   }
 }
 
-@keyframes typing {
-  from {
-    width: 0;
-  }
-  to {
-    width: 100%;
-  }
-}
-
-.animate-typing {
-  overflow: hidden;
-  white-space: nowrap;
-  border-right: 4px solid;
-  animation: typing 3s steps(40, end), blink-caret 0.75s step-end infinite;
-  width: 0;
-  animation-fill-mode: forwards;
-}
-
-@keyframes blink-caret {
-  from,
-  to {
-    border-color: transparent;
-  }
-  50% {
-    border-color: hsl(var(--primary));
-  }
-}
-
-.schedule-item,
-.faq-item {
-  transition: all 0.3s ease;
-}
-
-.schedule-item.open,
-.faq-item.open {
-  max-height: 500px;
-}
-
-.schedule-item .details,
-.faq-item .answer {
+/* Custom styles for FAQ and Schedule dropdowns */
+.faq-item .answer,
+.schedule-item .details {
   max-height: 0;
-  opacity: 0;
   overflow: hidden;
-  transition: all 0.3s ease;
+  transition: max-height 0.3s ease-out, padding 0.3s ease-out;
+  padding-top: 0;
 }
 
-.schedule-item.open .details,
-.faq-item.open .answer {
-  max-height: 500px;
-  opacity: 1;
-  padding-top: 0.5rem;
-  margin-top: 0.5rem;
+.faq-item.open .answer,
+.schedule-item.open .details {
+  max-height: 200px;
+  padding-top: 0.75rem;
 }

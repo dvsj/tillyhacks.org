@@ -6,9 +6,7 @@ import { Button } from "@/components/ui/button"
 import { useToast } from "@/components/ui/use-toast"
 import { useSupabase } from "@/components/supabase-provider"
 import { useRouter } from "next/navigation"
-import { FaSignInAlt, FaSignOutAlt, FaFileAlt, FaDiscord, FaInstagram, FaHandHoldingUsd } from "react-icons/fa"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { Menu } from "lucide-react"
 
 export default function Header() {
   const [userName, setUserName] = useState<string | null>(null)
@@ -27,7 +25,7 @@ export default function Header() {
     if (data.session) {
       const { data: userData } = await supabase.auth.getUser()
       if (userData.user) {
-        // Get user profile data
+        // get user profile data
         const { data: profileData } = await supabase.from("profiles").select("name").eq("id", userData.user.id).single()
 
         if (profileData) {
@@ -43,8 +41,8 @@ export default function Header() {
     await supabase.auth.signOut()
     setUserName(null)
     toast({
-      title: "Logged out",
-      description: "You have been logged out successfully.",
+      title: "logged out",
+      description: "see ya later",
     })
     router.push("/")
     router.refresh()
@@ -55,74 +53,79 @@ export default function Header() {
   }
 
   return (
-    <header className="border-b border-border">
+    <header className="border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-        <Link href="/" className="text-2xl md:text-3xl font-bold">
-          <span className="text-primary">Tilly</span>Hacks
+        <Link href="/" className="flex items-center space-x-2">
+          <img src="/logo.png" alt="TillyHacks Logo" className="h-8 w-8" />
+          <span className="text-2xl md:text-3xl font-bold">
+            <span className="text-primary">Tilly</span>Hacks
+          </span>
         </Link>
 
-        {/* Desktop Navigation */}
+        {/* desktop nav */}
         <div className="hidden md:flex items-center space-x-6">
-          {userName && <p className="text-sm text-muted-foreground">{userName}</p>}
+          {userName && <p className="text-sm text-muted-foreground">hey {userName}!</p>}
           <div className="flex items-center space-x-4">
-            <Link href="/instagram" className="text-foreground hover:text-primary transition-colors" title="Instagram">
-              <FaInstagram size={20} />
+            <Link href="/instagram" className="text-foreground hover:text-primary transition-colors" title="instagram">
+              <i className="fab fa-instagram text-xl"></i>
             </Link>
-            <Link href="/discord" className="text-foreground hover:text-primary transition-colors" title="Discord">
-              <FaDiscord size={20} />
+            <Link href="/discord" className="text-foreground hover:text-primary transition-colors" title="discord">
+              <i className="fab fa-discord text-xl"></i>
             </Link>
-            <Link href="/donate" className="text-foreground hover:text-primary transition-colors" title="Donate">
-              <FaHandHoldingUsd size={20} />
+            <Link href="/donate" className="text-foreground hover:text-primary transition-colors" title="donate">
+              <i className="fas fa-donate text-xl"></i>
             </Link>
-            <Link href="/forms" className="text-foreground hover:text-primary transition-colors" title="Forms">
-              <FaFileAlt size={20} />
+            <Link href="/forms" className="text-foreground hover:text-primary transition-colors" title="forms">
+              <i className="fas fa-file-alt text-xl"></i>
             </Link>
             {userName ? (
-              <Button variant="ghost" onClick={handleLogout} title="Logout">
-                <FaSignOutAlt size={20} />
+              <Button variant="ghost" onClick={handleLogout} title="logout">
+                <i className="fas fa-sign-out-alt text-xl"></i>
               </Button>
             ) : (
-              <Link href="/login" title="Login">
+              <Link href="/login" title="login">
                 <Button variant="ghost">
-                  <FaSignInAlt size={20} />
+                  <i className="fas fa-sign-in-alt text-xl"></i>
                 </Button>
               </Link>
             )}
           </div>
         </div>
 
-        {/* Mobile Navigation */}
+        {/* mobile nav */}
         <Sheet>
           <SheetTrigger asChild className="md:hidden">
             <Button variant="ghost" size="icon">
-              <Menu />
+              <i className="fas fa-bars"></i>
             </Button>
           </SheetTrigger>
           <SheetContent>
             <div className="flex flex-col space-y-4 mt-8">
-              {userName && <p className="text-sm text-muted-foreground mb-4">Welcome to TillyHacks, {userName}!</p>}
+              {userName && <p className="text-sm text-muted-foreground mb-4">hey {userName}!</p>}
               <Link href="/" className="py-2 hover:text-primary transition-colors">
-                Home
+                <i className="fas fa-home mr-2"></i>home
               </Link>
               <Link href="/forms" className="py-2 hover:text-primary transition-colors">
-                Forms
+                <i className="fas fa-file-alt mr-2"></i>forms
               </Link>
               <Link href="/instagram" className="py-2 hover:text-primary transition-colors">
-                Instagram
+                <i className="fab fa-instagram mr-2"></i>instagram
               </Link>
               <Link href="/discord" className="py-2 hover:text-primary transition-colors">
-                Discord
+                <i className="fab fa-discord mr-2"></i>discord
               </Link>
               <Link href="/donate" className="py-2 hover:text-primary transition-colors">
-                Donate
+                <i className="fas fa-donate mr-2"></i>donate
               </Link>
               {userName ? (
                 <Button variant="outline" onClick={handleLogout} className="mt-4">
-                  Logout
+                  <i className="fas fa-sign-out-alt mr-2"></i>logout
                 </Button>
               ) : (
                 <Link href="/login">
-                  <Button className="w-full mt-4">Login</Button>
+                  <Button className="w-full mt-4">
+                    <i className="fas fa-sign-in-alt mr-2"></i>login
+                  </Button>
                 </Link>
               )}
             </div>

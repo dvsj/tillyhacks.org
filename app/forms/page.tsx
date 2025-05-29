@@ -1,18 +1,25 @@
 "use client"
-
-import { useEffect, useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
 import Header from "@/components/header"
 import { useToast } from "@/components/ui/use-toast"
 import { useSupabase } from "@/components/supabase-provider"
+import Link from "next/link"
 
-export default function Forms() {
-  const [formStatus, setFormStatus] = useState({
-    parentForm: false,
-    attendeeForm: false,
-    waiverForm: false,
+interface FormStatus {
+  attendee: boolean
+  parent: boolean
+  waiver: boolean
+}
+
+export default function FormsPage() {
+  const [formStatus, setFormStatus] = useState<FormStatus>({
+    attendee: false,
+    parent: false,
+    waiver: false,
   })
   const [isLoading, setIsLoading] = useState(true)
   const router = useRouter()
@@ -25,140 +32,142 @@ export default function Forms() {
       if (!data.session) {
         toast({
           title: "Authentication required",
-          description: "You must be logged in to access this page.",
+          description: "You must be logged in to access forms.",
           variant: "destructive",
         })
         router.push("/login")
         return
       }
 
-      fetchFormStatus()
+      await checkFormStatus()
     }
 
     checkAuth()
   }, [])
 
-  const fetchFormStatus = async () => {
-    setIsLoading(true)
+  const checkFormStatus = async () => {
     try {
-      // Get current user ID
       const { data: userData } = await supabase.auth.getUser()
-      if (!userData.user) {
-        throw new Error("User not authenticated")
-      }
+      if (!userData.user) return
 
       const userId = userData.user.id
 
-      // Check parent form status - using count instead of single
-      const { data: parentData, error: parentError } = await supabase
-        .from("parent_forms")
-        .select("id")
-        .eq("user_id", userId)
-
-      if (parentError) {
-        console.error("Error fetching parent form status:", parentError)
-      }
-
-      // Check attendee form status
-      const { data: attendeeData, error: attendeeError } = await supabase
-        .from("attendee_forms")
-        .select("id")
-        .eq("user_id", userId)
-
-      if (attendeeError) {
-        console.error("Error fetching attendee form status:", attendeeError)
-      }
-
-      // Check waiver form status
-      const { data: waiverData, error: waiverError } = await supabase
-        .from("waiver_forms")
-        .select("id")
-        .eq("user_id", userId)
-
-      if (waiverError) {
-        console.error("Error fetching waiver form status:", waiverError)
-      }
+      // Check each form type
+      const [attendeeResult, parentResult, waiverResult] = await Promise.all([
+        supabase.from("attendee_forms").select("id").eq("user_id", userId).single(),
+        supabase.from("parent_forms").select("id").eq("user_id", userId).single(),
+        supabase.from("waiver_forms").select("id").eq("user_id", userId).single(),
+      ])
 
       setFormStatus({
-        parentForm: parentData && parentData.length > 0,
-        attendeeForm: attendeeData && attendeeData.length > 0,
-        waiverForm: waiverData && waiverData.length > 0,
-      })
-
-      console.log("Form status:", {
-        parentForm: parentData && parentData.length > 0,
-        attendeeForm: attendeeData && attendeeData.length > 0,
-        waiverForm: waiverData && waiverData.length > 0,
+        attendee: !!attendeeResult.data,
+        parent: !!parentResult.data,
+        waiver: !!waiverResult.data,
       })
     } catch (error) {
-      console.error("Error fetching form status:", error)
+      console.error("Error checking form status:", error)
     } finally {
       setIsLoading(false)
     }
   }
 
+  const forms = [
+    {
+      id: "attendee",
+      title: "Attendee Form",
+      description: "Basic info about you and any dietary restrictions",
+      href: "/forms/attendee",
+      completed: formStatus.attendee,
+    },
+    {
+      id: "parent",
+      title: "Parent/Guardian Form",
+      description: "Contact info for your parent or guardian",
+      href: "/forms/parent",
+      completed: formStatus.parent,
+    },
+    {
+      id: "waiver",
+      title: "Liability Waiver",
+      description: "Legal stuff - boring but necessary",
+      href: "/forms/waiver",
+      completed: formStatus.waiver,
+    },
+  ]
+
+  const completedCount = Object.values(formStatus).filter(Boolean).length
+  const totalForms = forms.length
+  const allCompleted = completedCount === totalForms
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Header />
+        <main className="container mx-auto px-4 py-8">
+          <div className="text-center">Loading...</div>
+        </main>
+      </div>
+    )
+  }
+
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      <main className="container mx-auto px-4 py-8">
-        <h1 className="text-4xl font-bold mb-4">Event Registration</h1>
-        <p className="mb-8">Please complete all forms to finalize your registration for TillyHacks.</p>
-
-        {isLoading ? (
-          <div className="flex justify-center items-center h-64">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+      <main className="container mx-auto px-4 py-8 max-w-4xl">
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-bold mb-4">registration forms</h1>
+          <p className="text-lg text-muted-foreground mb-4">
+            fill out all these forms to secure your spot. yeah it's annoying but we need this stuff for legal reasons.
+          </p>
+          <div className="flex items-center justify-center gap-2">
+            <span className="text-sm text-muted-foreground">Progress:</span>
+            <Badge variant={allCompleted ? "default" : "secondary"}>
+              {completedCount}/{totalForms} completed
+            </Badge>
           </div>
-        ) : (
-          <div className="grid gap-6 md:grid-cols-3">
-            <Card className={formStatus.parentForm ? "opacity-50" : ""}>
-              <CardHeader>
-                <CardTitle>Parent Form</CardTitle>
-                <CardDescription>Parent/guardian contact information</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Button
-                  onClick={() => router.push("/forms/parent")}
-                  className="w-full"
-                  disabled={formStatus.parentForm}
-                >
-                  {formStatus.parentForm ? "Completed" : "Complete Form"}
-                </Button>
-              </CardContent>
-            </Card>
+        </div>
 
-            <Card className={formStatus.attendeeForm ? "opacity-50" : ""}>
-              <CardHeader>
-                <CardTitle>Attendee Form</CardTitle>
-                <CardDescription>Attendee details and dietary restrictions</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Button
-                  onClick={() => router.push("/forms/attendee")}
-                  className="w-full"
-                  disabled={formStatus.attendeeForm}
-                >
-                  {formStatus.attendeeForm ? "Completed" : "Complete Form"}
-                </Button>
-              </CardContent>
-            </Card>
-
-            <Card className={formStatus.waiverForm ? "opacity-50" : ""}>
-              <CardHeader>
-                <CardTitle>Waiver Form</CardTitle>
-                <CardDescription>Legal waiver and consent</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Button
-                  onClick={() => router.push("/forms/waiver")}
-                  className="w-full"
-                  disabled={formStatus.waiverForm}
-                >
-                  {formStatus.waiverForm ? "Completed" : "Complete Form"}
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
+        {allCompleted && (
+          <Card className="mb-8 border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-950">
+            <CardContent className="p-6 text-center">
+              <h2 className="text-2xl font-bold text-green-800 dark:text-green-200 mb-2">🎉 you're all set!</h2>
+              <p className="text-green-700 dark:text-green-300">all forms completed. we'll see you at the hackathon!</p>
+            </CardContent>
+          </Card>
         )}
+
+        <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-3">
+          {forms.map((form) => (
+            <Card
+              key={form.id}
+              className={`transition-all hover:shadow-md ${form.completed ? "border-green-200" : ""}`}
+            >
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-xl">{form.title}</CardTitle>
+                  {form.completed && <Badge className="bg-green-100 text-green-800">✓ Done</Badge>}
+                </div>
+                <CardDescription>{form.description}</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Link href={form.href}>
+                  <Button className="w-full" variant={form.completed ? "outline" : "default"}>
+                    {form.completed ? "View/Edit" : "Fill Out"}
+                  </Button>
+                </Link>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+
+        <div className="mt-8 text-center">
+          <p className="text-sm text-muted-foreground">
+            having issues? email us at{" "}
+            <a href="mailto:hello@tillyhacks.org" className="text-primary hover:underline">
+              hello [at] tillyhacks [dot] org
+            </a>
+          </p>
+        </div>
       </main>
     </div>
   )

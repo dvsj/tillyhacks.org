@@ -12,6 +12,8 @@ import { useSupabase } from "@/components/supabase-provider"
 
 export default function Home() {
   const [userName, setUserName] = useState<string | null>(null)
+  const [displayText, setDisplayText] = useState("")
+  const [isTyping, setIsTyping] = useState(true)
   const { supabase } = useSupabase()
 
   useEffect(() => {
@@ -20,17 +22,18 @@ export default function Home() {
       if (data.session) {
         const { data: userData } = await supabase.auth.getUser()
         if (userData.user) {
-          // Get user profile data
+          // get user profile data
           const { data: profileData } = await supabase
             .from("profiles")
-            .select("name")
+            .select("first_name, name")
             .eq("id", userData.user.id)
             .single()
 
           if (profileData) {
-            setUserName(profileData.name)
+            setUserName(profileData.first_name || profileData.name?.split(" ")[0] || null)
           } else {
-            setUserName(userData.user.user_metadata?.name || null)
+            const githubName = userData.user.user_metadata?.name
+            setUserName(githubName ? githubName.split(" ")[0] : null)
           }
         }
       }
@@ -39,26 +42,53 @@ export default function Home() {
     checkUser()
   }, [supabase])
 
+  useEffect(() => {
+    const baseText = userName ? `Hello ${userName}, welcome to ` : "welcome to "
+    const fullText = baseText + "TillyHacks!"
+    let currentIndex = 0
+    setDisplayText("")
+    setIsTyping(true)
+
+    const typeText = () => {
+      if (currentIndex < fullText.length) {
+        setDisplayText(fullText.slice(0, currentIndex + 1))
+        currentIndex++
+        setTimeout(typeText, 100)
+      } else {
+        setIsTyping(false)
+      }
+    }
+
+    const timer = setTimeout(typeText, 500)
+    return () => clearTimeout(timer)
+  }, [userName])
+
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
       <Header />
       <main className="container mx-auto px-4 py-8 flex-1">
         <section className="py-12 md:py-20">
-          <h1 className="text-4xl md:text-6xl font-bold mb-4 animate-typing overflow-hidden whitespace-nowrap border-r-4 border-primary w-[300px] md:w-[600px]">
-            {userName ? `Welcome to TillyHacks, ${userName}!` : "Welcome to TillyHacks!"}
-          </h1>
-          <p className="text-xl mb-8">Northern Virginia • 09-xx-25 - 09-xx-25</p>
-          <div className="flex flex-col sm:flex-row gap-4">
-            <Link href="/forms">
-              <Button size="lg" className="bg-primary hover:bg-primary/90">
-                Register Now
-              </Button>
-            </Link>
-            <Link href="#schedule">
-              <Button size="lg" variant="outline">
-                View Schedule
-              </Button>
-            </Link>
+          <div className="text-center">
+            <h1 className="text-4xl md:text-6xl font-bold mb-4">
+              <span className={displayText.includes("TillyHacks") ? "text-foreground" : ""}>
+                {displayText.replace("TillyHacks!", "")}
+              </span>
+              {displayText.includes("TillyHacks") && <span className="text-primary">TillyHacks!</span>}
+              {isTyping && <span className="animate-pulse">|</span>}
+            </h1>
+            <p className="text-lg mb-8 text-muted-foreground">Northern Virginia • Sometime in September 2025</p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link href="/forms">
+                <Button size="lg" className="bg-primary hover:bg-primary/90">
+                  Register Now
+                </Button>
+              </Link>
+              <Link href="#schedule">
+                <Button size="lg" variant="outline">
+                  View schedule
+                </Button>
+              </Link>
+            </div>
           </div>
         </section>
 
@@ -68,7 +98,7 @@ export default function Home() {
         </section>
 
         <section id="faq" className="py-12">
-          <h2 className="text-3xl font-bold mb-8">FAQ</h2>
+          <h2 className="text-3xl font-bold mb-8">Faq</h2>
           <FAQ />
         </section>
 

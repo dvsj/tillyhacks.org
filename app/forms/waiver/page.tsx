@@ -16,7 +16,9 @@ import { useSupabase } from "@/components/supabase-provider"
 export default function WaiverForm() {
   const [waiverAgreement, setWaiverAgreement] = useState<string>("")
   const [signature, setSignature] = useState("")
+  const [existingForm, setExistingForm] = useState<any>(null)
   const [isLoading, setIsLoading] = useState(false)
+  const [isLoadingData, setIsLoadingData] = useState(true)
   const router = useRouter()
   const { toast } = useToast()
   const { supabase } = useSupabase()
@@ -31,11 +33,42 @@ export default function WaiverForm() {
           variant: "destructive",
         })
         router.push("/login")
+        return
       }
+
+      await loadExistingForm()
     }
 
     checkAuth()
   }, [])
+
+  const loadExistingForm = async () => {
+    try {
+      const { data: userData } = await supabase.auth.getUser()
+      if (!userData.user) return
+
+      const { data: existingData, error } = await supabase
+        .from("waiver_forms")
+        .select("*")
+        .eq("user_id", userData.user.id)
+        .maybeSingle()
+
+      if (error) {
+        console.error("Error loading form:", error)
+        return
+      }
+
+      if (existingData) {
+        setExistingForm(existingData)
+        setWaiverAgreement(existingData.waiver_agreement ? "agree" : "disagree")
+        setSignature(existingData.signature || "")
+      }
+    } catch (error) {
+      console.error("Error loading existing form:", error)
+    } finally {
+      setIsLoadingData(false)
+    }
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -57,25 +90,48 @@ export default function WaiverForm() {
         throw new Error("User not authenticated")
       }
 
-      const { error } = await supabase.from("waiver_forms").insert([
-        {
-          waiver_agreement: waiverAgreement === "agree",
-          signature,
-          user_id: userData.user.id,
-        },
-      ])
+      const formPayload = {
+        waiver_agreement: waiverAgreement === "agree",
+        signature,
+        user_id: userData.user.id,
+      }
+
+      // Use upsert instead of separate update/insert logic
+      const { error } = await supabase.from("waiver_forms").upsert(formPayload, {
+        onConflict: "user_id",
+        ignoreDuplicates: false,
+      })
 
       if (error) {
         throw error
       }
 
+      // Send Discord webhook notification
+      try {
+        await fetch("/api/discord-webhook", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            type: "waiver_form",
+            action: existingForm ? "updated" : "submitted",
+            data: {
+              signature: signature,
+              waiver_agreement: waiverAgreement === "agree",
+            },
+          }),
+        })
+      } catch (webhookError) {
+        console.error("Discord webhook error:", webhookError)
+      }
+
       toast({
-        title: "Form submitted",
-        description: "Waiver form has been submitted successfully.",
+        title: existingForm ? "Form updated" : "Form submitted",
+        description: `Waiver form has been ${existingForm ? "updated" : "submitted"} successfully.`,
       })
 
-      // Use window.location for a hard refresh to ensure form status is updated
-      window.location.href = "/forms"
+      router.push("/forms")
     } catch (error: any) {
       toast({
         title: "Submission failed",
@@ -87,14 +143,27 @@ export default function WaiverForm() {
     }
   }
 
+  if (isLoadingData) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Header />
+        <main className="container mx-auto px-4 py-8">
+          <div className="text-center">Loading...</div>
+        </main>
+      </div>
+    )
+  }
+
   return (
     <div className="min-h-screen bg-background">
       <Header />
       <main className="container mx-auto px-4 py-8 max-w-md">
         <Card>
           <CardHeader>
-            <CardTitle className="text-2xl">Waiver Form</CardTitle>
-            <CardDescription>Please read and agree to the waiver terms</CardDescription>
+            <CardTitle className="text-2xl">{existingForm ? "Edit Waiver Form" : "Waiver Form"}</CardTitle>
+            <CardDescription>
+              {existingForm ? "Update waiver agreement" : "Please read and agree to the waiver terms"}
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="mb-6 p-4 bg-muted rounded-md text-sm">
@@ -141,7 +210,7 @@ export default function WaiverForm() {
               </div>
 
               <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? "Submitting..." : "Submit"}
+                {isLoading ? "Submitting..." : existingForm ? "Update Form" : "Submit Form"}
               </Button>
             </form>
           </CardContent>

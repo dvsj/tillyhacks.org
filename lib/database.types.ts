@@ -9,6 +9,16 @@ export interface Database {
           created_at: string
           user_id: string
           attendee_name: string
+          school: string
+          grade_level: string
+          programming_experience: string
+          preferred_languages: string[] // Add array for preferred languages
+          tshirt_size: string
+          emergency_contact_name: string
+          emergency_contact_phone: string
+          how_did_you_hear: string
+          what_to_learn: string
+          team_preference: string
           dietary_restrictions: string | null
         }
         Insert: {
@@ -16,6 +26,16 @@ export interface Database {
           created_at?: string
           user_id: string
           attendee_name: string
+          school: string
+          grade_level: string
+          programming_experience: string
+          preferred_languages: string[] // Add array for preferred languages
+          tshirt_size: string
+          emergency_contact_name: string
+          emergency_contact_phone: string
+          how_did_you_hear: string
+          what_to_learn: string
+          team_preference: string
           dietary_restrictions?: string | null
         }
         Update: {
@@ -23,6 +43,16 @@ export interface Database {
           created_at?: string
           user_id?: string
           attendee_name?: string
+          school?: string
+          grade_level?: string
+          programming_experience?: string
+          preferred_languages?: string[] // Add array for preferred languages
+          tshirt_size?: string
+          emergency_contact_name?: string
+          emergency_contact_phone?: string
+          how_did_you_hear?: string
+          what_to_learn?: string
+          team_preference?: string
           dietary_restrictions?: string | null
         }
         Relationships: [
@@ -69,33 +99,37 @@ export interface Database {
         ]
       }
       profiles: {
-        Row: {
-          id: string
-          created_at: string
-          name: string
-          email: string
-        }
-        Insert: {
-          id: string
-          created_at?: string
-          name: string
-          email: string
-        }
-        Update: {
-          id?: string
-          created_at?: string
-          name?: string
-          email?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "profiles_id_fkey"
-            columns: ["id"]
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
+  Row: {
+    id: string
+    created_at: string
+    name: string
+    first_name: string | null
+    email: string
+  }
+  Insert: {
+    id: string
+    created_at?: string
+    name: string
+    first_name?: string | null
+    email: string
+  }
+  Update: {
+    id?: string
+    created_at?: string
+    name?: string
+    first_name?: string | null
+    email?: string
+  }
+  Relationships: [
+    {
+      foreignKeyName: "profiles_id_fkey"
+      columns: ["id"]
+      referencedRelation: "users"
+      referencedColumns: ["id"]
+    },
+  ]
+}
+
       waiver_forms: {
         Row: {
           id: number
