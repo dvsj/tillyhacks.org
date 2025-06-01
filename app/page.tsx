@@ -91,12 +91,10 @@ export default function Home() {
             </div>
           </div>
         </section>
-        
+
         <section id="schedule" className="py-12">
-          <h2 className="text-3xl font-bold mb-8">Schedule tbd</h2>
-          /*
-          * <Schedule />
-          */
+          <h2 className="text-3xl font-bold mb-8">Schedule</h2>
+          <Schedule />
         </section>
 
         <section id="faq" className="py-12">
