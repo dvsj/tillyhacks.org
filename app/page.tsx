@@ -64,7 +64,7 @@ export default function Home() {
   }, [userName])
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col">
+    <div className="min-h-screen bg-background text-foreground flex flex-col" data-devs_secret_message="hey, what's up, hello. if you see this, email me at dev [at] tillyhacks [dot] org and say hi!">
       <Header />
       <main className="container mx-auto px-4 py-8 flex-1">
         <section className="py-12 md:py-20">
