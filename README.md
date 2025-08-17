@@ -12,9 +12,9 @@ codebase of doom, despair, and sadness
 
 ## questions
 
-ask dev (@aqxq) not gabe (@ksgat)
+ask dev (@dvsj) not gabe (@ksgat)
 
-or email at hello [at] tillyhacks [dot] org
+or email at dev [at] tillyhacks [dot] org
 
 or just open an issue or something idk 
 
