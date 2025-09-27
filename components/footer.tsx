@@ -10,7 +10,7 @@ export default function Footer() {
           </span>
         </div>
         <p className="text-muted-foreground mb-4">
-          &copy; {new Date().getFullYear()} tillyhacks. built on burnout.
+          &copy; {new Date().getFullYear()} tillyhacks
         </p>
         <div className="flex justify-center space-x-6 text-sm">
           <Link href="mailto:hello@tillyhacks.org" className="text-muted-foreground hover:text-primary">
