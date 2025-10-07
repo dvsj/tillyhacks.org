@@ -23,8 +23,7 @@ export default function Sponsors() {
 
       <div className="text-center mt-8">
         <p className="mb-4 text-lg">Want to help out?</p>
-          <Button size="lg">Donate Now</Button>
-        </Link>
+        <Button size="lg">Donate Now</Button>
       </div>
     </div>
   )
