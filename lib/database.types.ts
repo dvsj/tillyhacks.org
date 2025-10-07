@@ -12,7 +12,7 @@ export interface Database {
           school: string
           grade_level: string
           programming_experience: string
-          preferred_languages: string[] // Add array for preferred languages
+          preferred_languages: string[] 
           tshirt_size: string
           emergency_contact_name: string
           emergency_contact_phone: string
@@ -29,7 +29,7 @@ export interface Database {
           school: string
           grade_level: string
           programming_experience: string
-          preferred_languages: string[] // Add array for preferred languages
+          preferred_languages: string[] 
           tshirt_size: string
           emergency_contact_name: string
           emergency_contact_phone: string
@@ -46,7 +46,7 @@ export interface Database {
           school?: string
           grade_level?: string
           programming_experience?: string
-          preferred_languages?: string[] // Add array for preferred languages
+          preferred_languages?: string[]
           tshirt_size?: string
           emergency_contact_name?: string
           emergency_contact_phone?: string

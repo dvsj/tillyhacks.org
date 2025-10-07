@@ -20,7 +20,6 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }) {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(() => {
-      // Refresh the page on auth state change
     })
 
     return () => {

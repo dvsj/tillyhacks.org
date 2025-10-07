@@ -147,7 +147,6 @@ export default function LoginPage() {
         </CardContent>
       </Card>
 
-      {/* Login Error Dialog */}
       <Dialog open={loginErrorOpen} onOpenChange={setLoginErrorOpen}>
         <DialogContent>
           <DialogHeader>
@@ -160,7 +159,6 @@ export default function LoginPage() {
         </DialogContent>
       </Dialog>
 
-      {/* Forgot Password Dialog */}
       <Dialog open={forgotPasswordOpen} onOpenChange={setForgotPasswordOpen}>
         <DialogContent>
           <DialogHeader>

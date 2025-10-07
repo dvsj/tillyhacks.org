@@ -81,7 +81,6 @@ body {
   }
 }
 
-/* Custom styles for FAQ and Schedule dropdowns */
 .faq-item .answer,
 .schedule-item .details {
   max-height: 0;

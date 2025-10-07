@@ -163,24 +163,19 @@ export default function AdminPage() {
   }
 
   const convertToCSV = (data: any[], headers: string[]) => {
-    // Create header row
     let csvContent = headers.join(",") + "\n"
 
-    // Add data rows
     data.forEach((item) => {
       const row = headers.map((header) => {
-        // Handle nested properties like profiles.name
         if (header.includes(".")) {
           const [parent, child] = header.split(".")
           return item[parent] && item[parent][child] ? `"${item[parent][child]}"` : '""'
         }
 
-        // Handle arrays
         if (Array.isArray(item[header])) {
           return `"${item[header].join("; ")}"`
         }
 
-        // Handle regular values, escape quotes and wrap in quotes
         const value = item[header] !== null && item[header] !== undefined ? item[header].toString() : ""
         return `"${value.replace(/"/g, '""')}"`
       })
@@ -195,15 +190,12 @@ export default function AdminPage() {
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" })
     const link = document.createElement("a")
 
-    // Create a URL for the blob
     const url = URL.createObjectURL(blob)
 
-    // Set link properties
     link.setAttribute("href", url)
     link.setAttribute("download", filename)
     link.style.visibility = "hidden"
 
-    // Add to document, click and remove
     document.body.appendChild(link)
     link.click()
     document.body.removeChild(link)

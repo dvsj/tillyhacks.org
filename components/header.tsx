@@ -11,7 +11,6 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 export default function Header() {
   const [userName, setUserName] = useState<string | null>(null)
   const [isClient, setIsClient] = useState(false)
-  const { supabase } = useSupabase()
   const { toast } = useToast()
   const router = useRouter()
 
@@ -25,7 +24,6 @@ export default function Header() {
     if (data.session) {
       const { data: userData } = await supabase.auth.getUser()
       if (userData.user) {
-        // get user profile data
         const { data: profileData } = await supabase.from("profiles").select("name").eq("id", userData.user.id).single()
 
         if (profileData) {
@@ -62,7 +60,6 @@ export default function Header() {
           </span>
         </Link>
 
-        {/* desktop nav */}
         <div className="hidden md:flex items-center space-x-6">
           {userName && <p className="text-sm text-muted-foreground">hey {userName}!</p>}
           <div className="flex items-center space-x-4">
@@ -92,7 +89,6 @@ export default function Header() {
           </div>
         </div>
 
-        {/* mobile nav */}
         <Sheet>
           <SheetTrigger asChild className="md:hidden">
             <Button variant="ghost" size="icon">

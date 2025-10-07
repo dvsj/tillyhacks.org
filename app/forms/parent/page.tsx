@@ -88,7 +88,6 @@ export default function ParentForm() {
         user_id: userData.user.id,
       }
 
-      // Use upsert instead of separate update/insert logic
       const { error } = await supabase.from("parent_forms").upsert(formPayload, {
         onConflict: "user_id",
         ignoreDuplicates: false,
@@ -98,7 +97,6 @@ export default function ParentForm() {
         throw error
       }
 
-      // Send Discord webhook notification
       try {
         await fetch("/api/discord-webhook", {
           method: "POST",

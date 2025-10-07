@@ -23,7 +23,6 @@ export default function Sponsors() {
 
       <div className="text-center mt-8">
         <p className="mb-4 text-lg">Want to help out?</p>
-        <Link href="https://hcb.hackclub.com/donations/start/tillyhacks">
           <Button size="lg">Donate Now</Button>
         </Link>
       </div>

@@ -52,7 +52,6 @@ export default function FormsPage() {
 
       const userId = userData.user.id
 
-      // Check each form type
       const [attendeeResult, parentResult, waiverResult] = await Promise.all([
         supabase.from("attendee_forms").select("id").eq("user_id", userId).single(),
         supabase.from("parent_forms").select("id").eq("user_id", userId).single(),

@@ -68,7 +68,6 @@ export default function FAQ() {
     setOpenItem(openItem === index ? null : index)
   }
 
-  // split the faq items into two columns
   const midpoint = Math.ceil(faqItems.length / 2)
   const leftColumn = faqItems.slice(0, midpoint)
   const rightColumn = faqItems.slice(midpoint)

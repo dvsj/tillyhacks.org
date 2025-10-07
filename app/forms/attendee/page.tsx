@@ -133,7 +133,6 @@ export default function AttendeeForm() {
         throw new Error("User not authenticated")
       }
 
-      // Ensure user profile exists first
       const { data: profileData, error: profileError } = await supabase
         .from("profiles")
         .select("id")
@@ -144,7 +143,6 @@ export default function AttendeeForm() {
         throw new Error("Error checking user profile")
       }
 
-      // Create profile if it doesn't exist
       if (!profileData) {
         const { error: createProfileError } = await supabase.from("profiles").insert({
           id: currentUser.id,
@@ -175,14 +173,12 @@ export default function AttendeeForm() {
 
       let result
       if (existingForm) {
-        // Update existing form
         result = await supabase
           .from("attendee_forms")
           .update(formPayload)
           .eq("user_id", currentUser.id)
           .eq("id", existingForm.id)
       } else {
-        // Insert new form
         result = await supabase.from("attendee_forms").insert([formPayload])
       }
 
@@ -190,7 +186,6 @@ export default function AttendeeForm() {
         throw result.error
       }
 
-      // Send Discord webhook notification
       try {
         await fetch("/api/discord-webhook", {
           method: "POST",
@@ -209,7 +204,6 @@ export default function AttendeeForm() {
         })
       } catch (webhookError) {
         console.error("Discord webhook error:", webhookError)
-        // Don't fail the form submission if webhook fails
       }
 
       toast({

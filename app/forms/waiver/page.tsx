@@ -96,7 +96,6 @@ export default function WaiverForm() {
         user_id: userData.user.id,
       }
 
-      // Use upsert instead of separate update/insert logic
       const { error } = await supabase.from("waiver_forms").upsert(formPayload, {
         onConflict: "user_id",
         ignoreDuplicates: false,
@@ -106,7 +105,6 @@ export default function WaiverForm() {
         throw error
       }
 
-      // Send Discord webhook notification
       try {
         await fetch("/api/discord-webhook", {
           method: "POST",

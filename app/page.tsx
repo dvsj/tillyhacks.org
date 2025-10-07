@@ -22,7 +22,6 @@ export default function Home() {
       if (data.session) {
         const { data: userData } = await supabase.auth.getUser()
         if (userData.user) {
-          // get user profile data
           const { data: profileData } = await supabase
             .from("profiles")
             .select("first_name, name")

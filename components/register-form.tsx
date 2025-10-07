@@ -87,7 +87,6 @@ export function RegisterForm() {
       }
 
       if (data.user) {
-        // Send Discord notification for new user
         try {
           await fetch("/api/discord-webhook", {
             method: "POST",

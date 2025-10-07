@@ -11,19 +11,15 @@ export async function GET(request: Request) {
     const supabase = createRouteHandlerClient({ cookies: () => cookieStore })
 
     try {
-      // Exchange the code for a session
       await supabase.auth.exchangeCodeForSession(code)
 
-      // Get the user data
       const {
         data: { user },
       } = await supabase.auth.getUser()
 
       if (user) {
-        // Check if a profile already exists for this user
         const { data: existingProfile } = await supabase.from("profiles").select("id").eq("id", user.id).single()
 
-        // If no profile exists, create one
         if (!existingProfile) {
           await supabase.from("profiles").insert({
             id: user.id,
@@ -37,9 +33,7 @@ export async function GET(request: Request) {
     }
   }
 
-  // Get the origin from the request URL to ensure correct redirection
   const origin = requestUrl.origin.includes("localhost") ? requestUrl.origin : "https://tillyhacks.org"
 
-  // Redirect to the home page
   return NextResponse.redirect(`${origin}/`)
 }
