@@ -50,7 +50,7 @@ export default function Home() {
               {userName ? `Hello ${userName}, welcome to ` : "welcome to "}
               <span className="text-primary">Tilly</span>Hacks!
             </h1>
-            <p className="text-lg mb-8 text-muted-foreground">Northern Virginia • coming soon winter 2025</p>
+            <p className="text-lg mb-8 text-muted-foreground">Northern Virginia • Coming soon in Winter 2025</p>
             <div className="flex flex-col gap-4 justify-center">
               {/* Interest form replaces registration for now */}
               <a href="https://docs.google.com/forms/d/1xWWsD1IJcsTjh35Y3605zMQZIbX_LEDWtO_iSD4RTt8/viewform" target="_blank" rel="noopener noreferrer">
