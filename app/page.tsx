@@ -75,31 +75,27 @@ export default function Home() {
               {displayText.includes("TillyHacks") && <span className="text-primary">TillyHacks!</span>}
               {isTyping && <span className="animate-pulse">|</span>}
             </h1>
-            <p className="text-lg mb-8 text-muted-foreground">Northern Virginia • Sometime in September 2025</p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/forms">
+            <p className="text-lg mb-8 text-muted-foreground">Northern Virginia • coming soon winter 2025</p>
+            <div className="flex flex-col gap-4 justify-center">
+              {/* Interest form replaces registration for now */}
+              <a href="https://docs.google.com/forms/d/1xWWsD1IJcsTjh35Y3605zMQZIbX_LEDWtO_iSD4RTt8/viewform" target="_blank" rel="noopener noreferrer">
                 <Button size="lg" className="bg-primary hover:bg-primary/90">
-                  Register Now
+                  Express Interest
                 </Button>
-              </Link>
-              <Link href="#schedule">
-                <Button size="lg" variant="outline">
-                  View schedule
-                </Button>
-              </Link>
+              </a>
             </div>
           </div>
         </section>
 
-        <section id="schedule" className="py-12">
-          <h2 className="text-3xl font-bold mb-8">Schedule</h2>
-          <Schedule />
-        </section>
+        {/* Schedule removed for interest-only phase. will restore later when event details are finalized. */}
 
-        <section id="faq" className="py-12">
-          <h2 className="text-3xl font-bold mb-8">Faq</h2>
-          <FAQ />
-        </section>
+        {/*
+          <section id="faq" className="py-12">
+            <h2 className="text-3xl font-bold mb-8">FAQ</h2>
+            <FAQ />
+          </section>
+          // FAQ section hidden for interest-only phase. 
+        */}
 
         <section id="sponsors" className="py-12">
           <h2 className="text-3xl font-bold mb-8">Sponsors</h2>

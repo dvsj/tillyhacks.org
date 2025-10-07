@@ -72,20 +72,23 @@ export default function Header() {
             <Link href="/donate" className="text-foreground hover:text-primary transition-colors" title="donate">
               <i className="fas fa-donate text-xl"></i>
             </Link>
-            <Link href="/forms" className="text-foreground hover:text-primary transition-colors" title="forms">
-              <i className="fas fa-file-alt text-xl"></i>
-            </Link>
-            {userName ? (
-              <Button variant="ghost" onClick={handleLogout} title="logout">
-                <i className="fas fa-sign-out-alt text-xl"></i>
-              </Button>
-            ) : (
-              <Link href="/login" title="login">
-                <Button variant="ghost">
-                  <i className="fas fa-sign-in-alt text-xl"></i>
-                </Button>
+            {/*
+              <Link href="/forms" className="text-foreground hover:text-primary transition-colors" title="forms">
+                <i className="fas fa-file-alt text-xl"></i>
               </Link>
-            )}
+              {userName ? (
+                <Button variant="ghost" onClick={handleLogout} title="logout">
+                  <i className="fas fa-sign-out-alt text-xl"></i>
+                </Button>
+              ) : (
+                <Link href="/login" title="login">
+                  <Button variant="ghost">
+                    <i className="fas fa-sign-in-alt text-xl"></i>
+                  </Button>
+                </Link>
+              )}
+              // Login, register, and forms links are hidden for interest-only phase. will restore when registration opens.
+            */}
           </div>
         </div>
 
@@ -101,9 +104,12 @@ export default function Header() {
               <Link href="/" className="py-2 hover:text-primary transition-colors">
                 <i className="fas fa-home mr-2"></i>home
               </Link>
-              <Link href="/forms" className="py-2 hover:text-primary transition-colors">
-                <i className="fas fa-file-alt mr-2"></i>forms
-              </Link>
+              {/*
+                <Link href="/forms" className="py-2 hover:text-primary transition-colors">
+                  <i className="fas fa-file-alt mr-2"></i>forms
+                </Link>
+                // Forms link hidden for interest-only phase.
+              */}
               <Link href="/instagram" className="py-2 hover:text-primary transition-colors">
                 <i className="fab fa-instagram mr-2"></i>instagram
               </Link>
@@ -113,17 +119,20 @@ export default function Header() {
               <Link href="/donate" className="py-2 hover:text-primary transition-colors">
                 <i className="fas fa-donate mr-2"></i>donate
               </Link>
-              {userName ? (
-                <Button variant="outline" onClick={handleLogout} className="mt-4">
-                  <i className="fas fa-sign-out-alt mr-2"></i>logout
-                </Button>
-              ) : (
-                <Link href="/login">
-                  <Button className="w-full mt-4">
-                    <i className="fas fa-sign-in-alt mr-2"></i>login
+              {/*
+                {userName ? (
+                  <Button variant="outline" onClick={handleLogout} className="mt-4">
+                    <i className="fas fa-sign-out-alt mr-2"></i>logout
                   </Button>
-                </Link>
-              )}
+                ) : (
+                  <Link href="/login">
+                    <Button className="w-full mt-4">
+                      <i className="fas fa-sign-in-alt mr-2"></i>login
+                    </Button>
+                  </Link>
+                )}
+                // Login/logout hidden for interest-only phase.
+              */}
             </div>
           </SheetContent>
         </Sheet>
