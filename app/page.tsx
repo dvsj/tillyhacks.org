@@ -12,8 +12,6 @@ import { useSupabase } from "@/components/supabase-provider"
 
 export default function Home() {
   const [userName, setUserName] = useState<string | null>(null)
-  const [displayText, setDisplayText] = useState("")
-  const [isTyping, setIsTyping] = useState(true)
   const { supabase } = useSupabase()
 
   useEffect(() => {
@@ -41,26 +39,6 @@ export default function Home() {
     checkUser()
   }, [supabase])
 
-  useEffect(() => {
-    const baseText = userName ? `Hello ${userName}, welcome to ` : "welcome to "
-    const fullText = baseText + "TillyHacks!"
-    let currentIndex = 0
-    setDisplayText("")
-    setIsTyping(true)
-
-    const typeText = () => {
-      if (currentIndex < fullText.length) {
-        setDisplayText(fullText.slice(0, currentIndex + 1))
-        currentIndex++
-        setTimeout(typeText, 100)
-      } else {
-        setIsTyping(false)
-      }
-    }
-
-    const timer = setTimeout(typeText, 500)
-    return () => clearTimeout(timer)
-  }, [userName])
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col" data-devs_secret_message="hey, what's up, hello. if you see this, email me at dev [at] tillyhacks [dot] org and say hi!">
@@ -69,11 +47,8 @@ export default function Home() {
         <section className="py-12 md:py-20">
           <div className="text-center">
             <h1 className="text-4xl md:text-6xl font-bold mb-4">
-              <span className={displayText.includes("TillyHacks") ? "text-foreground" : ""}>
-                {displayText.replace("TillyHacks!", "")}
-              </span>
-              {displayText.includes("TillyHacks") && <span className="text-primary">TillyHacks!</span>}
-              {isTyping && <span className="animate-pulse">|</span>}
+              {userName ? `Hello ${userName}, welcome to ` : "welcome to "}
+              <span className="text-primary">Tilly</span>Hacks!
             </h1>
             <p className="text-lg mb-8 text-muted-foreground">Northern Virginia • coming soon winter 2025</p>
             <div className="flex flex-col gap-4 justify-center">
